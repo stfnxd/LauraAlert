@@ -1,3 +1,40 @@
+// Indsæt dit StreamElements overlay token her
+const overlayToken = "074jtlBDjSe5zYpvOW0M"; 
+
+// Opret forbindelse til StreamElements WebSocket
+const socket = new WebSocket(`wss://realtime.streamelements.com/socket?token=${overlayToken}`);
+
+socket.onopen = function () {
+    console.log("✅ Forbundet til StreamElements WebSocket");
+};
+
+socket.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    console.log("🔔 Event modtaget:", data);
+
+    if (data.type === "event") {
+        const eventData = data.data;
+        const alertData = {
+            type: eventData.type,
+            name: eventData.username || "Ukendt",
+            amount: eventData.amount || 0,
+            tier: eventData.tier || 0
+        };
+        triggerAlert(alertData);
+    }
+};
+
+socket.onerror = function (error) {
+    console.error("❌ WebSocket Fejl:", error);
+};
+
+socket.onclose = function () {
+    console.log("⚠️ WebSocket lukket, prøver at genoprette forbindelse...");
+    setTimeout(() => {
+        location.reload();
+    }, 5000);
+};
+
 // Funktion til at trigge animation og lyd
 function triggerAlert(eventData) {
     const sunContainer = document.getElementById('sun-container');
@@ -57,42 +94,3 @@ function triggerAlert(eventData) {
         alertText.classList.remove('animate');
     }, 5000);
 }
-
-// Lyt efter StreamElements events
-window.addEventListener('onEventReceived', function (obj) {
-    console.log("StreamElements event modtaget:", obj);
-
-    const event = obj.detail.event;
-    const listener = obj.detail.listener;
-
-    let eventData = {
-        name: event.name,
-        type: '',
-        tier: '',
-        amount: ''
-    };
-
-    switch(listener) {
-        case 'follower-latest':
-            eventData.type = 'follower';
-            break;
-        case 'subscriber-latest':
-            eventData.type = 'subscriber';
-            eventData.tier = event.tier;
-            break;
-        case 'tip-latest':
-            eventData.type = 'tip';
-            eventData.amount = event.amount;
-            break;
-        case 'cheer-latest':
-            eventData.type = 'cheer';
-            eventData.amount = event.amount;
-            break;
-        case 'raid-latest':
-            eventData.type = 'raid';
-            eventData.amount = event.amount;
-            break;
-    }
-
-    triggerAlert(eventData);
-});
