@@ -57,3 +57,42 @@ function triggerAlert(eventData) {
         alertText.classList.remove('animate');
     }, 5000);
 }
+
+// Lyt efter StreamElements events
+window.addEventListener('onEventReceived', function (obj) {
+    console.log("StreamElements event modtaget:", obj);
+
+    const event = obj.detail.event;
+    const listener = obj.detail.listener;
+
+    let eventData = {
+        name: event.name,
+        type: '',
+        tier: '',
+        amount: ''
+    };
+
+    switch(listener) {
+        case 'follower-latest':
+            eventData.type = 'follower';
+            break;
+        case 'subscriber-latest':
+            eventData.type = 'subscriber';
+            eventData.tier = event.tier;
+            break;
+        case 'tip-latest':
+            eventData.type = 'tip';
+            eventData.amount = event.amount;
+            break;
+        case 'cheer-latest':
+            eventData.type = 'cheer';
+            eventData.amount = event.amount;
+            break;
+        case 'raid-latest':
+            eventData.type = 'raid';
+            eventData.amount = event.amount;
+            break;
+    }
+
+    triggerAlert(eventData);
+});
