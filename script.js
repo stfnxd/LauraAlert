@@ -11,7 +11,7 @@ window.addEventListener("message", function(event) {
 }, false);
 
 // Indsæt dit StreamElements overlay token her
-const overlayToken = "67b4b80d3de849372fb950b9";
+const overlayToken = "A2lGkesUYM6X9_B2ZK1HaTjrC7Qo9RFbVo3DKCN0SCmdvPyk";
 
 // Opret forbindelse til StreamElements WebSocket
 const socket = new WebSocket(`wss://realtime.streamelements.com/socket?token=${overlayToken}`);
