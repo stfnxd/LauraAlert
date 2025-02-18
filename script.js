@@ -10,6 +10,17 @@ window.addEventListener("message", function(event) {
     triggerAlert(alertData);
 }, false);
 
+
+window.addEventListener("message", function(event) {
+    console.log("🔔 Modtog besked fra StreamElements:", event.data);
+}, false);
+
+window.addEventListener("message", function(event) {
+    console.log("🌍 Event fra:", event.origin);
+    console.log("📩 Data modtaget:", event.data);
+}, false);
+
+
 // Funktion til at vise alert
 function triggerAlert(alertData) {
     const sunContainer = document.getElementById("sun-container");
