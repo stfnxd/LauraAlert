@@ -1,5 +1,5 @@
 // Indsæt dit StreamElements overlay token her
-const overlayToken = "074jtlBDjSe5zYpvOW0M"; 
+const overlayToken = "67b4b80d3de849372fb950b9"; 
 
 // Opret forbindelse til StreamElements WebSocket
 const socket = new WebSocket(`wss://realtime.streamelements.com/socket?token=${overlayToken}`);
