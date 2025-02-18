@@ -1,4 +1,4 @@
-// Modtag beskeder fra StreamElements widgeten
+// Lyt efter beskeder fra StreamElements
 window.addEventListener("message", function(event) {
     // Tjek at beskeden kommer fra StreamElements
     if (!event.origin.includes("streamelements.com")) return;
@@ -6,43 +6,36 @@ window.addEventListener("message", function(event) {
     const alertData = event.data;
     console.log("🔔 Modtog event fra StreamElements:", alertData);
 
-    // Kald triggerAlert for at starte animationen
+    // Vis alerten
     triggerAlert(alertData);
 }, false);
 
-// Indsæt dit StreamElements overlay token her
-const overlayToken = "A2lGkesUYM6X9_B2ZK1HaTjrC7Qo9RFbVo3DKCN0SCmdvPyk";
+// Funktion til at vise alert
+function triggerAlert(alertData) {
+    const sunContainer = document.getElementById("sun-container");
+    const username = document.getElementById("username");
+    const eventInfo = document.getElementById("event-info");
+    const alertText = document.getElementById("alert-text");
 
-// Opret forbindelse til StreamElements WebSocket
-const socket = new WebSocket(`wss://realtime.streamelements.com/socket?token=${overlayToken}`);
+    // Opdater teksten baseret på event-type
+    username.innerText = alertData.username || "Ukendt";
+    eventInfo.innerText = alertData.type === "tip" ? `donerede ${alertData.amount} kr!` 
+    : alertData.type === "subscriber" ? `subbede på tier ${alertData.tier}!` 
+    : alertData.type === "cheer" ? `cheerede ${alertData.amount} bits!` 
+    : "gør noget fedt!";
 
-socket.onopen = function () {
-    console.log("✅ Forbundet til StreamElements WebSocket");
-};
+    // Start animation
+    sunContainer.classList.add("animate");
+    alertText.classList.add("animate");
 
-socket.onmessage = function (event) {
-    const data = JSON.parse(event.data);
-    console.log("🔔 Event modtaget:", data);
+    // Afspil lyd (hvis du har en lydfil)
+    const alertSound = document.getElementById("alert-sound");
+    alertSound.src = "alert.mp3"; // Tilføj din egen lydfil
+    alertSound.play();
 
-    if (data.type === "event") {
-        const eventData = data.data;
-        const alertData = {
-            type: eventData.type,
-            name: eventData.username || "Ukendt",
-            amount: eventData.amount || 0,
-            tier: eventData.tier || 0
-        };
-        triggerAlert(alertData);
-    }
-};
-
-socket.onerror = function (error) {
-    console.error("❌ WebSocket Fejl:", error);
-};
-
-socket.onclose = function () {
-    console.log("⚠️ WebSocket lukket, prøver at genoprette forbindelse...");
+    // Fjern animation efter et par sekunder
     setTimeout(() => {
-        location.reload();
-    }, 5000);
-};
+        sunContainer.classList.remove("animate");
+        alertText.classList.remove("animate");
+    }, 4000);
+}
